@@ -23,6 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
+app.get("/",(req,res)=>{
+  res.json({"message":"Welcome to the API"})
+})
 app.use("/api/v1", userRoutes)
 // const routes = fs.readdirSync("./src/routes");
 // routes.map((route) => {
