@@ -73,21 +73,25 @@ const loginUser = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    
     // Save token in cookie
-    
+
     res.cookie("token", token, {
       path: "/",
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
-    
+
     const { password: userPassword, ...otherData } = user._doc;
-    return res.status(200).json({ ...otherData, token});
+    return res.status(200).json({ ...otherData, token });
   } catch (error) {
-    return res.status(500).json({ "message": error });
+    return res.status(500).json({ message: error });
   }
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logged out successfully" });
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
