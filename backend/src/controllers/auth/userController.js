@@ -58,7 +58,6 @@ const loginUser = async (req, res) => {
 
     // Check is user exists
     const user = await User.findOne({ email });
-    console.log(user);
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
@@ -70,9 +69,24 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    return res.status(200).json(user);
+    // Create a token
+
+    const token = generateToken(user._id);
+
+    
+    // Save token in cookie
+    
+    res.cookie("token", token, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    
+    const { password: userPassword, ...otherData } = user._doc;
+    return res.status(200).json({ ...otherData, token});
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return res.status(500).json({ "message": error });
   }
 };
 
